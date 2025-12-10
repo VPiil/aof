@@ -7,7 +7,6 @@ for line in lines:
     parts = line.split(",")
     x, y = map(int, parts)
     coordinates.append((x, y))
-    print(line)
 
 biggest = 0
 
