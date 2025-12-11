@@ -65,6 +65,39 @@ class Machine:
                     best = len(comb)
         return best
 
+    def configureJoltages(self):
+        target = self.joltages
+        empty = self.createEmpty(self.joltages)
+        combs = self.indicators
+        visited = set()
+
+        def recursio(saved, path):
+            if saved == target:
+                return saved
+
+            state = tuple(saved)
+            if state in visited:
+                return None
+            visited.add(state)
+
+            if saved == target:
+                return path
+
+            for comb in combs:
+                new_saved = saved.copy()
+                for idx in comb:
+                   new_saved[idx] += 1
+                
+                if any(new_saved[i] > target[i] for i in range(len(target))):
+                    continue
+                
+                result = recursio(new_saved, path + [comb])
+                if result is not None:
+                    return result
+                   
+            return None
+        start = [0] * len(target)
+        return recursio(start, [])
 
 
 
@@ -85,3 +118,25 @@ for line in lines:
     del machine
 
 print(f"Part 1: {counter}")
+
+
+#Part 2 Not working
+
+jCounter = 0
+for line in lines:
+    machine = Machine()
+    line = line.strip()
+    parts = line.split(" ")
+    goall = parts[0]
+    indis = []
+    for part in parts:
+        if "(" in part:
+            indis.append(part)
+        if "{" in part:
+            machine.createJoltages(part)
+    machine.createGoal(goall)
+    machine.createIndicators(indis)
+    print(len(machine.configureJoltages()))
+    counter += len(machine.configureJoltages())
+    del machine
+print(counter)
